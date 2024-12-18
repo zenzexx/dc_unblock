@@ -1,3 +1,11 @@
+@echo off
+
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    powershell -Command "Start-Process '%~f0' -Verb RunAs"
+    exit /b
+)
+
 if "%~1"=="silent" goto silent
 
 >"%temp%\silent.vbs" echo Set WshShell = CreateObject("WScript.Shell")
@@ -8,7 +16,7 @@ exit
 
 :silent
 
-winws.exe zapret: http,https,quic ^
+"%~dp0winws.exe" zapret: http,https,quic ^
 --wf-tcp=80,443 --wf-udp=443,50000-50099 ^
 --filter-tcp=80,443 --dpi-desync=fake,disorder2 --dpi-desync-autottl=2 --dpi-desync-fooling=md5sig --new ^
 --filter-udp=50000-50099 --ipset="%~dp0list-discord.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-any-protocol --dpi-desync-cutoff=n4 --new ^
